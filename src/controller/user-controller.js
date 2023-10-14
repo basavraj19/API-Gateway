@@ -21,6 +21,35 @@ async function createUser(req,res)
     }
 }
 
+async function signIn(req,res)
+{
+    try {
+        const response = await UserService.signIn({
+            userId : req.body.userId,
+            password : req.body.password,
+        });
+        Successresponse.data =response;
+        return res.status(StatusCodes.OK).json(Successresponse); 
+    } catch (error) {
+        Errorrespones.error =error;
+        
+    }
+}
+
+async function checkAuth(req, res) {
+    try {
+        const response = await UserService.isAuthenticated(req.headers['x-access-token']);
+        req.user = response;
+        Successresponse.data =response;
+        return res.status(StatusCodes.OK).json(Successresponse); 
+    } catch (error) {
+        Errorrespones.error =error;
+        return res.status(error.statuscode).json(Errorrespones);
+    }
+}
+
 module.exports  ={
-    createUser
+    createUser,
+    signIn,
+    checkAuth
 }

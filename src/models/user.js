@@ -2,6 +2,10 @@
 const {
   Model
 } = require('sequelize');
+
+const bycrpt =require('bcrypt');
+const {Serverconfig} =require('../config');
+
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
@@ -40,5 +44,9 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'User',
   });
+   User.beforeCreate(function encyptPassword(User){
+      const encyptedPassword = bycrpt.hashSync(User.password,+Serverconfig.SALTROUND);
+      User.password =encyptedPassword;
+   });
   return User;
 };

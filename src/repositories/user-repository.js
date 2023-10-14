@@ -7,6 +7,11 @@ class UserRepository extends CrudRepository{
     {
         super(User)
     }
+    async getUserbyUserId(userId)
+    {
+       const user = await User.findOne({where : {userId : userId}});
+       return user;
+    }
 };
 
 module.exports =UserRepository;
