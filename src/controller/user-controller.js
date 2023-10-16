@@ -36,10 +36,12 @@ async function signIn(req,res)
     }
 }
 
-async function checkAuth(req, res) {
+async function addRoleToUser(req, res) {
     try {
-        const response = await UserService.isAuthenticated(req.headers['x-access-token']);
-        req.user = response;
+        const response = await UserService.addRoleToUser({
+            userId : req.body.userId,
+            roleId : req.body.roleId
+        });
         Successresponse.data =response;
         return res.status(StatusCodes.OK).json(Successresponse); 
     } catch (error) {
@@ -51,5 +53,5 @@ async function checkAuth(req, res) {
 module.exports  ={
     createUser,
     signIn,
-    checkAuth
+    addRoleToUser
 }

@@ -29,7 +29,7 @@ app.use('/flightsService', createProxyMiddleware({ target: Serverconfig.FLIGHT_S
 
 app.use('/bookingService', createProxyMiddleware({ target: serverConfig.BOOKING_SERVICE, changeOrigin: true , pathRewrite: {'^/bookingService' : '/'}}));
 
-app.listen(Serverconfig.PORT, () => {
+app.listen(Serverconfig.PORT, async () => {
     console.log(`Server is up and Runing on ${Serverconfig.PORT}`);
     //logger.info("Server is up successfully");
 });

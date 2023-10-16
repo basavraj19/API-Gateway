@@ -10,6 +10,6 @@ router.post('/signUp',UserController.createUser);
 
 router.post('/signIn',UserMiddlware.validateSignInRequest,UserController.signIn);
 
-router.get('/',UserMiddlware.validateSignInRequestByToken,UserController.checkAuth);
+router.post('/role',UserMiddlware.checkAuth,UserMiddlware.isAdmin,UserController.addRoleToUser);
 
 module.exports =router;

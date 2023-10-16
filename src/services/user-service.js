@@ -1,4 +1,4 @@
-const { UserRepository } = require('../repositories');
+const { UserRepository , RoleRepository} = require('../repositories');
 
 const { AppError } = require('../utils');
 
@@ -8,12 +8,18 @@ const { Auth } = require('../utils/common');
 
 const User = new UserRepository();
 
+const Role = new RoleRepository();
+
+const { ENUM } =require('../utils/common');
+const { CUSTOMER, ADMIN } =ENUM.UserRoles;
+
 async function createUser(data) {
     try {
         const user = await User.create(data);
+        const role = await Role.getRoleByName(CUSTOMER);
+        user.addRole(role);
         return user;
     } catch (error) {
-        console.log(error);
         throw new AppError('somthing went wrong while creating user', StatusCodes.INTERNAL_SERVER_ERROR);
     }
 }
@@ -38,10 +44,6 @@ async function signIn(data) {
 
 async function isAuthenticated(token) {
     try {
-        console.log(token);
-        if (!token) {
-            throw new AppError('Missing JWT', StatusCodes.NOT_FOUND);
-        }
         const response = Auth.verifyToken(token);
         const user = await User.get(response.id);
         if (!user) {
@@ -64,8 +66,42 @@ async function isAuthenticated(token) {
     }
 }
 
+async function isAdmin(id){
+    try {
+        const user = await User.get(id);
+        if(!user)
+        {
+            throw new AppError('User Not Found', StatusCodes.NOT_FOUND);
+        }
+        const role =await Role.getRoleByName(ADMIN);
+        return user.hasRole(role);
+
+    } catch (error) {
+        throw error;
+    }
+}
+async function addRoleToUser(data)
+{
+    try {
+        const user = await User.getUserbyUserId(data.userId);
+        if(!user)
+        {
+            throw new AppError('User Not Found', StatusCodes.NOT_FOUND);
+        }
+        const role =await  Role.getRoleByPk(data.roleId);
+        if(!role)
+        {
+            throw new AppError('Invalid Role Id', StatusCodes.BAD_REQUEST);
+        }
+        user.addRole(role);
+    } catch (error) {
+        throw error;
+    }
+}
 module.exports = {
     createUser,
     signIn,
-    isAuthenticated
+    isAuthenticated,
+    addRoleToUser,
+    isAdmin
 }
