@@ -32,7 +32,6 @@ async function signIn(req,res)
         return res.status(StatusCodes.OK).json(Successresponse); 
     } catch (error) {
         Errorrespones.error =error;
-        
     }
 }
 
